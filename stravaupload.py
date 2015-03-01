@@ -36,6 +36,13 @@ def main():
         print 'No access_token found in %s' % configfile
         sys.exit(0)
 
+    # Get activity type
+    activity_type = None
+    if args.activity:
+        activity_type = args.activity
+    elif config.has_option('default', 'activity'):
+        activity_type = config.get('default', 'activity')
+
     strava = Client()
     strava.access_token = access_token
 
@@ -46,7 +53,7 @@ def main():
                                data_type='tcx',
                                name=args.title,
                                private=True if args.private else False,
-                               activity_type=args.activity)
+                               activity_type=activity_type)
     except exc.ActivityUploadFailed as error:
         print 'An exception occured: ',
         print error
