@@ -3,7 +3,7 @@
 """
 
 import sys
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, HTTPError
 from argparse import ArgumentParser
 from ConfigParser import SafeConfigParser
 
@@ -47,18 +47,33 @@ def main():
     strava.access_token = access_token
 
     # Try to upload
+    print 'Uploading...'
     try:
-        print 'Uploading...'
-        strava.upload_activity(activity_file=open(args.input, 'r'),
-                               data_type='tcx',
-                               name=args.title,
-                               private=True if args.private else False,
-                               activity_type=activity_type)
+        upload = strava.upload_activity(
+            activity_file=open(args.input, 'r'),
+            data_type='tcx',
+            name=args.title,
+            private=True if args.private else False,
+            activity_type=activity_type
+        )
     except exc.ActivityUploadFailed as error:
         print 'An exception occured: ',
         print error
+        exit(1)
     except ConnectionError as error:
         print 'No internet connection'
+        exit(1)
+
+    print 'Upload succeeded.'
+    print 'Waiting for activity...'
+
+    try:
+        activity = upload.wait()
+    except HTTPError as error:
+        print 'HTTPError:' + error
+        exit(0)
+
+    print 'Activity id: ' + str(activity.id)
 
 
 if __name__ == '__main__':
