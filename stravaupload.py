@@ -3,6 +3,7 @@
 """
 
 import sys
+import webbrowser
 from requests.exceptions import ConnectionError, HTTPError
 from argparse import ArgumentParser
 from ConfigParser import SafeConfigParser
@@ -23,6 +24,8 @@ def main():
     parser.add_argument('-a', '--activity', choices=model.Activity.TYPES,
                         metavar='',
                         help='Possible values: {%(choices)s}')
+    parser.add_argument('-v', '--view', action='store_true',
+                        help='Open the activity in a web browser.')
     args = parser.parse_args()
 
     # Check if an access token is provided
@@ -74,6 +77,10 @@ def main():
         exit(0)
 
     print 'Activity id: ' + str(activity.id)
+
+    if args.view:
+        url = 'https://www.strava.com/activities/' + str(activity.id)
+        webbrowser.open_new_tab(url)
 
 
 if __name__ == '__main__':
