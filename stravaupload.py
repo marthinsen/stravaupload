@@ -3,6 +3,7 @@
 """
 
 import sys
+import os
 import webbrowser
 from requests.exceptions import ConnectionError, HTTPError
 from argparse import ArgumentParser
@@ -29,7 +30,8 @@ def main():
     args = parser.parse_args()
 
     # Check if an access token is provided
-    configfile = '.stravaupload.cfg'
+    configfile = [os.path.expanduser('~/.stravaupload.cfg'),
+                  '.stravaupload.cfg']
     config = SafeConfigParser()
     config.read(configfile)
 
