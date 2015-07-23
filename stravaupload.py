@@ -77,8 +77,11 @@ def main():
         try:
             activity = upload.wait()
         except HTTPError as error:
-            print 'HTTPError:' + error
-            exit(0)
+            if error.args[0].startswith('401'):
+                print "You don't have permission to view this activity"
+            else:
+                print 'HTTPError: ' + ', '.join(str(i) for i in error.args)
+            return
 
         print 'Activity id: ' + str(activity.id)
 
