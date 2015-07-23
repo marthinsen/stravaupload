@@ -70,17 +70,18 @@ def main():
         exit(1)
 
     print 'Upload succeeded.'
-    print 'Waiting for activity...'
-
-    try:
-        activity = upload.wait()
-    except HTTPError as error:
-        print 'HTTPError:' + error
-        exit(0)
-
-    print 'Activity id: ' + str(activity.id)
 
     if args.view:
+        print 'Waiting for activity...'
+
+        try:
+            activity = upload.wait()
+        except HTTPError as error:
+            print 'HTTPError:' + error
+            exit(0)
+
+        print 'Activity id: ' + str(activity.id)
+
         url = 'https://www.strava.com/activities/' + str(activity.id)
         webbrowser.open_new_tab(url)
 
