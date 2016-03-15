@@ -23,7 +23,7 @@ except ImportError:
 
 setup(name='StravaUpload',
       version='1.0',
-      description='Upload tcs files to Strava',
+      description='Upload files to Strava',
       author='Eirik Marthinsen',
       author_email='eirikma@gmail.com',
       url='https://github.com/marthinsen/stravaupload',

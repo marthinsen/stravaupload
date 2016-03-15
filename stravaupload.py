@@ -19,7 +19,7 @@ def data_type_from_filename(filename):
 
     data_type = None
 
-    for ext in ['.fit','.fit.gz', '.tcx', '.tcx.gz', '.gpx', '.gpx.gz']:
+    for ext in ['.fit', '.fit.gz', '.tcx', '.tcx.gz', '.gpx', '.gpx.gz']:
         if filename.endswith(ext):
             data_type = ext.lstrip('.')
 
