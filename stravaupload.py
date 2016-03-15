@@ -37,6 +37,7 @@ def main():
     parser = ArgumentParser(description='Upload files to Strava')
     parser.add_argument('input', help='Input filename')
     parser.add_argument('-t', '--title', help='Title of activity')
+    parser.add_argument('-d', '--description', help='Description of activity')
     parser.add_argument('-p', '--private', action='store_true',
                         help='Make the activity private')
     parser.add_argument('-a', '--activity', choices=model.Activity.TYPES,
@@ -78,6 +79,7 @@ def main():
             activity_file=open(args.input, 'r'),
             data_type=data_type,
             name=args.title,
+            description=args.description,
             private=True if args.private else False,
             activity_type=activity_type
         )
