@@ -36,7 +36,6 @@ def name_and_description_from_file(filename):
 
     if filename.endswith('.gpx') or filename.endswith('.gpx.gz'):
         import gpxpy
-        import gpxpy.gpx
 
         if filename.endswith('.gpx.gz'):
             import gzip
@@ -47,7 +46,6 @@ def name_and_description_from_file(filename):
         elif filename.endswith('.gpx'):
             with open(filename) as gpx_data:
                 gpx = gpxpy.parse(gpx_data)
-                return gpx.name, gpx.description
 
         return gpx.name, gpx.description
 
