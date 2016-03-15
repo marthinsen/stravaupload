@@ -2,11 +2,11 @@
 """ Upload files to Strava
 """
 
-import sys
 import os
+import sys
 import webbrowser
-from requests.exceptions import ConnectionError, HTTPError
 from argparse import ArgumentParser
+from requests.exceptions import ConnectionError, HTTPError
 from ConfigParser import SafeConfigParser
 
 from stravalib import Client, exc, model
@@ -52,46 +52,9 @@ def name_and_description_from_file(filename):
     return None, None
 
 
-def main():
-    """Main function
+def upload_file(args, strava, activity_type):
+    """Upload a single file
     """
-
-    # Parse the input arguments
-    parser = ArgumentParser(description='Upload files to Strava')
-    parser.add_argument('input', help='Input filename')
-    parser.add_argument('-t', '--title', help='Title of activity')
-    parser.add_argument('-d', '--description', help='Description of activity')
-    parser.add_argument('-p', '--private', action='store_true',
-                        help='Make the activity private')
-    parser.add_argument('-a', '--activity', choices=model.Activity.TYPES,
-                        metavar='',
-                        help='Possible values: {%(choices)s}')
-    parser.add_argument('-v', '--view', action='store_true',
-                        help='Open the activity in a web browser.')
-    args = parser.parse_args()
-
-    # Check if an access token is provided
-    configfile = [os.path.expanduser('~/.stravaupload.cfg'),
-                  '.stravaupload.cfg']
-    config = SafeConfigParser()
-    config.read(configfile)
-
-    if config.has_option('access', 'token'):
-        access_token = config.get('access', 'token')
-    else:
-        print 'No access_token found in %s' % configfile
-        sys.exit(0)
-
-    # Get activity type
-    activity_type = None
-    if args.activity:
-        activity_type = args.activity
-    elif config.has_option('default', 'activity'):
-        activity_type = config.get('default', 'activity')
-
-    strava = Client()
-    strava.access_token = access_token
-
     # Find the data type
     data_type = data_type_from_filename(args.input)
 
@@ -140,6 +103,49 @@ def main():
 
         url = 'https://www.strava.com/activities/' + str(activity.id)
         webbrowser.open_new_tab(url)
+
+
+def main():
+    """Main function
+    """
+
+    # Parse the input arguments
+    parser = ArgumentParser(description='Upload files to Strava')
+    parser.add_argument('input', help='Input filename')
+    parser.add_argument('-t', '--title', help='Title of activity')
+    parser.add_argument('-d', '--description', help='Description of activity')
+    parser.add_argument('-p', '--private', action='store_true',
+                        help='Make the activity private')
+    parser.add_argument('-a', '--activity', choices=model.Activity.TYPES,
+                        metavar='',
+                        help='Possible values: {%(choices)s}')
+    parser.add_argument('-v', '--view', action='store_true',
+                        help='Open the activity in a web browser.')
+    args = parser.parse_args()
+
+    # Check if an access token is provided
+    configfile = [os.path.expanduser('~/.stravaupload.cfg'),
+                  '.stravaupload.cfg']
+    config = SafeConfigParser()
+    config.read(configfile)
+
+    if config.has_option('access', 'token'):
+        access_token = config.get('access', 'token')
+    else:
+        print 'No access_token found in %s' % configfile
+        sys.exit(0)
+
+    # Get activity type
+    activity_type = None
+    if args.activity:
+        activity_type = args.activity
+    elif config.has_option('default', 'activity'):
+        activity_type = config.get('default', 'activity')
+
+    strava = Client()
+    strava.access_token = access_token
+
+    upload_file(args, strava, activity_type)
 
 
 if __name__ == '__main__':
