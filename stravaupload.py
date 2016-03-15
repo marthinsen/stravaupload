@@ -29,6 +29,30 @@ def data_type_from_filename(filename):
     return data_type
 
 
+def name_and_description_from_file(filename):
+    """Find the name and description from GPX files.
+    Other files not yet supported.
+    """
+
+    if filename.endswith('.gpx') or filename.endswith('.gpx.gz'):
+        import gpxpy
+        import gpxpy.gpx
+
+        if filename.endswith('.gpx.gz'):
+            import gzip
+            with gzip.open(filename) as info:
+                gpx_data = info.read()
+            gpx = gpxpy.parse(gpx_data)
+
+        elif filename.endswith('.gpx'):
+            with open(filename) as gpx_data:
+                gpx = gpxpy.parse(gpx_data)
+                return gpx.name, gpx.description
+
+        return gpx.name, gpx.description
+
+    return None, None
+
 def main():
     """Main function
     """
@@ -71,6 +95,14 @@ def main():
 
     # Find the data type
     data_type = data_type_from_filename(args.input)
+
+    # Extract name and description from the file
+    if not args.title or not args.description:
+        name, description = name_and_description_from_file(args.input)
+    if not args.title:
+        args.title = name
+    if not args.description:
+        args.description = description
 
     # Try to upload
     print 'Uploading...'
