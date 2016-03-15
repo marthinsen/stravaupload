@@ -1,1 +1,5 @@
 .stravaupload.cfg
+*.fit
+*.tcx
+*.gpx
+*.gz
