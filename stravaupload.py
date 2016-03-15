@@ -53,6 +53,7 @@ def name_and_description_from_file(filename):
 
     return None, None
 
+
 def main():
     """Main function
     """
