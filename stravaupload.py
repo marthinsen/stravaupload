@@ -130,6 +130,8 @@ def main():
                         help='Possible values: {%(choices)s}')
     parser.add_argument('-v', '--view', action='store_true',
                         help='Open the activity in a web browser.')
+    parser.add_argument('-x', '--test', action='store_true',
+                        help="Don't actually upload anything.")
     args = parser.parse_args()
 
     # Check if an access token is provided
