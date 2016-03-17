@@ -2,6 +2,7 @@
 """ Upload files to Strava
 """
 
+import glob
 import os
 import sys
 import webbrowser
@@ -52,42 +53,50 @@ def name_and_description_from_file(filename):
     return None, None
 
 
-def upload_file(args, strava, activity_type):
+def upload_file(strava, filename, activity_name, activity_description,
+                activity_type, private, view, test, may_exit=True):
     """Upload a single file
     """
     # Find the data type
-    data_type = data_type_from_filename(args.input)
+    data_type = data_type_from_filename(filename)
 
     # Extract name and description from the file
-    if not args.title or not args.description:
-        name, description = name_and_description_from_file(args.input)
-    if not args.title:
-        args.title = name
-    if not args.description:
-        args.description = description
+    if not activity_name or not activity_description:
+        new_name, new_description = name_and_description_from_file(filename)
+    if not activity_name:
+        activity_name = new_name
+    if not activity_description:
+        activity_description = new_description
 
     # Try to upload
     print 'Uploading...'
     try:
-        upload = strava.upload_activity(
-            activity_file=open(args.input, 'r'),
-            data_type=data_type,
-            name=args.title,
-            description=args.description,
-            private=True if args.private else False,
-            activity_type=activity_type
-        )
+        if test:
+            print 'Test mode: not actually uploading.'
+        else:
+            upload = strava.upload_activity(
+                activity_file=open(filename, 'r'),
+                data_type=data_type,
+                name=activity_name,
+                description=activity_description,
+                private=True if private else False,
+                activity_type=activity_type
+            )
     except exc.ActivityUploadFailed as error:
-        print 'An exception occured: ',
+        print 'An exception occurred: ',
         print error
-        exit(1)
+        if may_exit:
+            exit(1)
+        return
     except ConnectionError as error:
         print 'No internet connection'
-        exit(1)
+        if may_exit:
+            exit(1)
+        return
 
     print 'Upload succeeded.'
 
-    if args.view:
+    if view:
         print 'Waiting for activity...'
 
         try:
@@ -145,7 +154,20 @@ def main():
     strava = Client()
     strava.access_token = access_token
 
-    upload_file(args, strava, activity_type)
+    # Is the input a single file or wildcard?
+    if os.path.isfile(args.input):
+        upload_file(strava, args.input, args.title, args.description,
+                    activity_type, args.private, args.view, args.test)
+    else:
+        filenames = glob.glob(args.input)
+        if len(filenames) == 0:
+            sys.exit('No input files found')
+        else:
+            for i, filename in enumerate(filenames):
+                print i+1, "/", len(filenames)
+                upload_file(strava, filename, args.title, args.description,
+                            activity_type, args.private, args.view, args.test,
+                            may_exit=False)
 
 
 if __name__ == '__main__':
