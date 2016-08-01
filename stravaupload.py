@@ -29,6 +29,29 @@ def data_type_from_filename(filename):
     return data_type
 
 
+def name_and_description_from_file(filename):
+    """Find the name and description from GPX files.
+    Other files not yet supported.
+    """
+
+    if filename.endswith('.gpx') or filename.endswith('.gpx.gz'):
+        import gpxpy
+
+        if filename.endswith('.gpx.gz'):
+            import gzip
+            with gzip.open(filename) as info:
+                gpx_data = info.read()
+            gpx = gpxpy.parse(gpx_data)
+
+        elif filename.endswith('.gpx'):
+            with open(filename) as gpx_data:
+                gpx = gpxpy.parse(gpx_data)
+
+        return gpx.name, gpx.description
+
+    return None, None
+
+
 def main():
     """Main function
     """
@@ -37,6 +60,7 @@ def main():
     parser = ArgumentParser(description='Upload files to Strava')
     parser.add_argument('input', help='Input filename')
     parser.add_argument('-t', '--title', help='Title of activity')
+    parser.add_argument('-d', '--description', help='Description of activity')
     parser.add_argument('-p', '--private', action='store_true',
                         help='Make the activity private')
     parser.add_argument('-a', '--activity', choices=model.Activity.TYPES,
@@ -71,6 +95,14 @@ def main():
     # Find the data type
     data_type = data_type_from_filename(args.input)
 
+    # Extract name and description from the file
+    if not args.title or not args.description:
+        name, description = name_and_description_from_file(args.input)
+    if not args.title:
+        args.title = name
+    if not args.description:
+        args.description = description
+
     # Try to upload
     print 'Uploading...'
     try:
@@ -78,6 +110,7 @@ def main():
             activity_file=open(args.input, 'r'),
             data_type=data_type,
             name=args.title,
+            description=args.description,
             private=True if args.private else False,
             activity_type=activity_type
         )
