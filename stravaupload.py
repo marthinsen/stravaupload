@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-""" Upload tcx files to Strava
+""" Upload files to Strava
 """
 
 import sys
@@ -12,13 +12,30 @@ from ConfigParser import SafeConfigParser
 from stravalib import Client, exc, model
 
 
+def data_type_from_filename(filename):
+    """Return the data type from the filename's extension.
+    Exit if not supported.
+    """
+
+    data_type = None
+
+    for ext in ['.fit', '.fit.gz', '.tcx', '.tcx.gz', '.gpx', '.gpx.gz']:
+        if filename.endswith(ext):
+            data_type = ext.lstrip('.')
+
+    if not data_type:
+        exit('Extension not supported')
+
+    return data_type
+
+
 def main():
     """Main function
     """
 
     # Parse the input arguments
-    parser = ArgumentParser(description='Upload tcx file to Strava')
-    parser.add_argument('input', help='Input tcx file')
+    parser = ArgumentParser(description='Upload files to Strava')
+    parser.add_argument('input', help='Input filename')
     parser.add_argument('-t', '--title', help='Title of activity')
     parser.add_argument('-p', '--private', action='store_true',
                         help='Make the activity private')
@@ -51,12 +68,15 @@ def main():
     strava = Client()
     strava.access_token = access_token
 
+    # Find the data type
+    data_type = data_type_from_filename(args.input)
+
     # Try to upload
     print 'Uploading...'
     try:
         upload = strava.upload_activity(
             activity_file=open(args.input, 'r'),
-            data_type='tcx',
+            data_type=data_type,
             name=args.title,
             private=True if args.private else False,
             activity_type=activity_type
