@@ -1,0 +1,15 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly"
+script:
+  - nosetests --with-coverage --cover-tests
+  - python setup.py install
+
+after_success:
+  - CODECLIMATE_REPO_TOKEN=a7029e6e54b889f53fa20e187213abc952b65b79fe333ecb13291a14b26896da codeclimate-test-reporter
