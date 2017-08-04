@@ -1,5 +1,11 @@
 .stravaupload.cfg
 *.fit
+__pycache__/
+*.py[cod]
+build/
+
+.coverage
+
 *.tcx
 *.gpx
 *.gz
