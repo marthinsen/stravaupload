@@ -9,5 +9,5 @@ You need Python with [stravalib](https://github.com/hozn/stravalib) installed: `
 
 ## Instructions
 1. Create a Strava application and follow the instructions here: http://strava.github.io/api/v3/oauth/ to get an access token.
-2. Rename the file .stravalib.cfg.sample to .stravalib.cfg (or ~/.stravaupload.cfg') and enter the access token there.
+2. Rename the file .stravaupload.cfg.sample to .stravaupload.cfg (or ~/.stravaupload.cfg') and enter the access token there.
 3. Run the script by `./stravaupload.py`
