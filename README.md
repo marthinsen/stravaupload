@@ -1,4 +1,4 @@
-# stravaupload [![Build Status](https://travis-ci.org/marthinsen/stravaupload.svg?branch=master)](https://travis-ci.org/marthinsen/stravaupload)
+# stravaupload [![Build Status](https://travis-ci.org/marthinsen/stravaupload.svg?branch=master)](https://travis-ci.org/marthinsen/stravaupload) [![Code Climate](https://codeclimate.com/github/marthinsen/stravaupload/badges/gpa.svg)](https://codeclimate.com/github/marthinsen/stravaupload)
 
 Small Python script to upload FIT, TCX and GPX (and .fit.gz, .tcx.gz, .gpx.gz) files to Strava. It is intended for personal use and has a lot of limitations. Feel free to use it however you like. If you have any comments, questions or want to help, dont hesitate to contact me.
 
